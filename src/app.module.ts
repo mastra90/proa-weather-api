@@ -6,6 +6,7 @@ import { Variable } from './db/tables/variable';
 import { Measurement } from './db/tables/measurement';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { WeatherStationsController } from './weather-stations.controller';
 
 @Module({
   imports: [
@@ -20,8 +21,9 @@ import { AppService } from './app.service';
       entities: [WeatherStation, Variable, Measurement],
       synchronize: true,
     }),
+    TypeOrmModule.forFeature([WeatherStation, Variable, Measurement]),
   ],
-  controllers: [AppController],
+  controllers: [AppController, WeatherStationsController],
   providers: [AppService],
 })
 export class AppModule {}
