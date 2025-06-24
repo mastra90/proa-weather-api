@@ -6,7 +6,7 @@ export class WeatherStation {
   id: number;
 
   @Column()
-  name: string;
+  ws_name: string;
 
   @Column()
   site: string;
