@@ -1,6 +1,6 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { WeatherStation } from './db/tables/weather-station';
 import { Measurement } from './db/tables/measurement';
 import { Variable } from './db/tables/variable';
@@ -16,16 +16,36 @@ export class WeatherStationsController {
     private variableRepo: Repository<Variable>,
   ) {}
 
-  // Returns all stations
+  // Returns all stations with optional state filtering
   @Get()
-  async getAllStations() {
-    return await this.weatherStationRepo.find();
+  async getAllStations(@Query('states') states?: string) {
+    if (states) {
+      const stateArray = states.split(',');
+      return await this.weatherStationRepo.find({
+        where: {
+          state: In(stateArray),
+        },
+      });
+    }
+
+    const stations = await this.weatherStationRepo.find();
+
+    // console.log('Type: (Returns true if an array) ', Array.isArray(stations));
+    // console.log('Length: (Returns number of stations) ', stations.length);
+    // console.log('Return complete array: ', stations);
+    return stations;
   }
 
   // Returns all variables with their long names and units
   @Get('variables')
   async getAllVariables() {
-    return await this.variableRepo.find();
+    const variables = await this.variableRepo.find();
+
+    // console.log('Type: (Returns true if an array) ', Array.isArray(variables));
+    // console.log('Length: (Returns number of variables) ', variables.length);
+    // console.log('Return complete array: ', variables);
+
+    return variables;
   }
 
   // Returns single weather station with the latest measurements for each variable
@@ -59,6 +79,10 @@ export class WeatherStationsController {
         });
       }
     }
+
+    // console.log('Type: (Returns true if an array) ', Array.isArray(latestMeasurements));
+    // console.log('Length: (Returns number of variables) ', latestMeasurements.length);
+    // console.log('Return complete array: ', latestMeasurements);
 
     return latestMeasurements;
   }
