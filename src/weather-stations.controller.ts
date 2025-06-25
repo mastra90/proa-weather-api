@@ -22,6 +22,12 @@ export class WeatherStationsController {
     return await this.weatherStationRepo.find();
   }
 
+  // Returns all variables with their long names and units
+  @Get('variables')
+  async getAllVariables() {
+    return await this.variableRepo.find();
+  }
+
   // Returns single weather station with the latest measurements for each variable
   @Get(':id/latest')
   async getLatestMeasurements(@Param('id') id: string) {
